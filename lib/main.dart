@@ -9,12 +9,13 @@ void main() async {
   await Hive.initFlutter();
 
   Hive.registerAdapter(ModelAdapter());
-  await Hive.openBox('boxtodo');
+  // var box = await Hive.openBox('boxtodo');
 
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  // final box;
   const MyApp({super.key});
 
   @override
@@ -23,7 +24,21 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primarySwatch: Colors.yellow, unselectedWidgetColor: Colors.black),
-      home: Tampilan(),
+      home: FutureBuilder(
+          future: Hive.openBox('boxtodo'),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                return const Center(
+                  child: Text('error'),
+                );
+              } else {
+                return Tampilan();
+              }
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          }),
     );
   }
 }

@@ -1,11 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo_app_v2/database/databasetodo.dart';
 
 class ListTileMethod extends StatelessWidget {
   final bool checkBoxValue;
   final String teks;
+  final Box value;
+  final String taskName;
+  final int index;
 
   const ListTileMethod(
-      {super.key, required this.checkBoxValue, required this.teks});
+      {super.key,
+      required this.checkBoxValue,
+      required this.teks,
+      required this.value,
+      required this.taskName,
+      required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +38,11 @@ class ListTileMethod extends StatelessWidget {
 
   Widget checkBoxWidget() {
     return Checkbox(
-      activeColor: Colors.black,
-      value: checkBoxValue,
-      onChanged: (value) {},
-    );
+        activeColor: Colors.black,
+        value: checkBoxValue,
+        onChanged: (x) {
+          bool checkBoxValueNew = !checkBoxValue;
+          value.putAt(index, ModelTodo(taskName, checkBoxValueNew));
+        });
   }
 }

@@ -8,7 +8,7 @@ part of 'databasetodo.dart';
 
 class ModelAdapter extends TypeAdapter<ModelTodo> {
   @override
-  final int typeId = 1;
+  final int typeId = 2;
 
   @override
   ModelTodo read(BinaryReader reader) {
@@ -17,8 +17,8 @@ class ModelAdapter extends TypeAdapter<ModelTodo> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ModelTodo(
-      fields[0] as String,
-      fields[1] as bool,
+      fields[2] as String,
+      fields[3] as bool,
     );
   }
 
@@ -26,9 +26,9 @@ class ModelAdapter extends TypeAdapter<ModelTodo> {
   void write(BinaryWriter writer, ModelTodo obj) {
     writer
       ..writeByte(2)
-      ..writeByte(0)
+      ..writeByte(2)
       ..write(obj.titleActivity)
-      ..writeByte(1)
+      ..writeByte(3)
       ..write(obj.checkActivity);
   }
 
