@@ -18,21 +18,23 @@ class Tampilan extends StatefulWidget {
 class _TampilanState extends State<Tampilan> {
   TextEditingController controllerTask = TextEditingController();
   // ModelTodo? data;
-  void onDelete(BuildContext context, Box value, int index) {
-    value.delete(index);
+  void onDelete(BuildContext context, Box value, int index) async {
+    await value.deleteAt(index);
+    print('Value on Delete ${value.keys}');
     print(index);
   }
 
   void onUpdate(Box value, String teks, bool x, int index) {
     value.putAt(index, ModelTodo(teks, x));
+    print('Value on Update ${value.keys}');
   }
 
   void onWrite(Box value, String teks) async {
     await value.add(ModelTodo(teks, false));
-    // Navigator.of(context).pop();
+    print('Value on write ${value.keys}');
   }
 
-  void onCancel() {
+  void onCancel(BuildContext context) {
     Navigator.of(context).pop();
   }
 
@@ -42,8 +44,11 @@ class _TampilanState extends State<Tampilan> {
       builder: (context) {
         return BoxDiaolog(
           controllerTask: controllerTask,
-          oncancel: onCancel,
-          onwrite: () => onWrite(value, controllerTask.text),
+          oncancel: () => onCancel(context),
+          onwrite: () {
+            onWrite(value, controllerTask.text);
+            // Navigator.of(context).pop();
+          },
         );
       },
     );
@@ -51,13 +56,9 @@ class _TampilanState extends State<Tampilan> {
 
   @override
   Widget build(BuildContext context) {
-    List cehckboxBool = [
-      false,
-      true,
-      false,
-    ];
+    var boxValue = Hive.box('boxtodo');
     return ValueListenableBuilder(
-      valueListenable: Hive.box('boxtodo').listenable(),
+      valueListenable: boxValue.listenable(),
       builder: (context, value, _) => Scaffold(
         floatingActionButton: FloatingActionButton(
           onPressed: () => dialogBox(value: value),
@@ -79,7 +80,7 @@ class _TampilanState extends State<Tampilan> {
               itemCount: value.length,
               itemBuilder: (context, index) {
                 ModelTodo data = value.getAt(index);
-                if (value.length == 0) {
+                if (boxValue.length == 0) {
                   return Center(
                     child: Text('Data Kosong'),
                   );
@@ -112,7 +113,7 @@ class _TampilanState extends State<Tampilan> {
                         index: index,
                         taskName: data.titleActivity,
                         checkBoxValue: data.checkActivity,
-                        teks: data.titleActivity + '===' + index.toString(),
+                        // teks: data.titleActivity + '===' + index.toString(),
                       ),
                     ),
                   );
